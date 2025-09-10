@@ -1,0 +1,36 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    overflow: hidden;
+}
+
+html {
+    font-size: 13px;
+}
+
+textarea,
+input:focus {
+    outline: none;
+}
+
+button {
+    outline: none;
+    border: none;
+}
+
+input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+body {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    background-color: #f2f2f2;
+}
