@@ -162,7 +162,7 @@ export default function App() {
                 </div>
 
                 <div
-                    className="btn-default ml-auto"
+                    className={`btn-default ml-auto ${(!!documentName && /\d/.test(documentNumbers) && !!documentContent) || !!documentField ? '' : 'is-disable'}`}
                     onClick={() => {
                         exportSQL({
                             updateScope,

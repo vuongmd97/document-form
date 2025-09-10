@@ -140,21 +140,21 @@ export const exportSQL = async (params) => {
     const migrationFilename = `m${createDate}_${createTime}_${documentNumbersCleaned}_${fileSuffix}_${scopeUpdate}.php`;
     zip.file(migrationFilename, migrationSQL);
 
-    // const migrationSQLInsert = getMigrationSQLInsert({
-    //     companySchema,
-    //     companyID,
-    //     documentName: documentNameSanitized,
-    //     documentContent: documentContentMigration,
-    //     documentField: documentFieldMigration,
-    //     documentNumbers: documentNumbersCleaned,
-    //     createTime,
-    //     createDate,
-    //     scopeUpdate
-    // });
+    const migrationSQLInsert = getMigrationSQLInsert({
+        companySchema,
+        companyID,
+        documentName: documentNameSanitized,
+        documentContent: documentContentMigration,
+        documentField: documentFieldMigration,
+        documentNumbers: documentNumbersCleaned,
+        createTime,
+        createDate,
+        scopeUpdate
+    });
 
-    // const migrationSQLInsertFilename = `m${createDate}_${createTime}_${documentNumbersCleaned}_insert_new_doc_${scopeUpdate}.php`;
+    const migrationSQLInsertFilename = `m${createDate}_${createTime}_${documentNumbersCleaned}_insert_new_doc_${scopeUpdate}.php`;
 
-    folder.file(migrationFilename, migrationSQL);
+    folder.file(migrationSQLInsertFilename, migrationSQLInsert);
 
     // Export file SQL
     const docDataContent = `-- DOCUMENT_NUMBERS
