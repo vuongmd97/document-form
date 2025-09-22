@@ -24,7 +24,7 @@ export default function ModalGenerateFile({ handleOpenModal }) {
 
     const fileFormat = documentName
         .trim()
-        .replace(/['&’.,]/g, '')
+        .replace(/[’'&,.\-+]/g, '')
         .replace(/[\s\/-]+/g, '_');
     const baseName = fileFormat.replace(/[()]/g, '');
 

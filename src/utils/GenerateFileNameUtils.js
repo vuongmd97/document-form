@@ -7,7 +7,7 @@ export const generateFilename = ({ documentNumbers, documentName = 'Document', s
     const day = formatDate(now.getDate());
 
     const formatDocumentName = documentName
-        .replace(/[’'&,.-]/g, '')
+        .replace(/[’'&,.\-+]/g, '')
         .replace(/[\s/]+/g, '_')
         .trim();
 
