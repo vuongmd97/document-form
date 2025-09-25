@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 import { useState, useEffect } from 'react';
 
 import { IonIcon } from '@ionic/react';
-import { closeOutline, downloadOutline, copyOutline, radioButtonOnOutline, text } from 'ionicons/icons';
+import { closeOutline, downloadOutline, copyOutline, radioButtonOnOutline } from 'ionicons/icons';
 
 import { contentController, getPagesSnippet } from '../../utils/controllers';
 

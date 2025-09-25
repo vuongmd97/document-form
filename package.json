@@ -16,6 +16,7 @@
         "jszip": "^3.10.1",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
+        "react-hot-toast": "^2.6.0",
         "reset-css": "^5.0.2",
         "sass": "^1.89.2"
     },

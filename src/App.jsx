@@ -11,6 +11,7 @@ import ModalImportData from './components/modals/ModalImportData';
 import ModalConvertJsonToPHP from './components/modals/ModalConvertJsonToPHP';
 import { getCurrentSQL, exportSQL } from './utils/sqlManager';
 import { sanitizeNameForSQL } from './utils/sanitizers';
+import { Toaster, toast } from 'react-hot-toast';
 
 export default function App() {
     const [selectedTab, setSelectedTab] = useState('insert');
@@ -133,6 +134,32 @@ export default function App() {
         setUpdateScope(key);
     };
 
+    const handleCopyText = (text) => {
+        if (!documentContent && !documentField) return;
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+                toast.success('Copied!');
+            })
+            .catch(() => {
+                toast.error('Copy failed');
+            });
+    };
+
+    const sqlValue = getCurrentSQL({
+        updateScope,
+        selectedTab,
+        documentName: sanitizeNameForSQL(documentName),
+        documentID,
+        documentUpdateMode,
+        documentContent,
+        documentField,
+        isHtmlEnabled,
+        isControllerEnabled,
+        companySchema,
+        companyID
+    });
+
     return (
         <div className="app">
             <div className="app__header">
@@ -194,21 +221,11 @@ export default function App() {
             <div className="app__container">
                 <div className="form">{tabs.find((tab) => tab.key === selectedTab).content}</div>
                 <div className="form preview">
+                    <Toaster position="top-right" toastOptions={{ duration: 1500 }} />
                     <textarea
                         className="field-textarea"
-                        value={getCurrentSQL({
-                            updateScope,
-                            selectedTab,
-                            documentName: sanitizeNameForSQL(documentName),
-                            documentID,
-                            documentUpdateMode,
-                            documentContent,
-                            documentField,
-                            isHtmlEnabled,
-                            isControllerEnabled,
-                            companySchema,
-                            companyID
-                        })}
+                        value={sqlValue}
+                        onClick={() => handleCopyText(sqlValue)}
                         readOnly
                     />
                 </div>
