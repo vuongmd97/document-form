@@ -11,7 +11,7 @@ import ModalImportData from './components/modals/ModalImportData';
 import ModalConvertJsonToPHP from './components/modals/ModalConvertJsonToPHP';
 import { getCurrentSQL, exportSQL } from './utils/sqlManager';
 import { sanitizeNameForSQL } from './utils/sanitizers';
-import { Toaster, toast } from 'react-hot-toast';
+// import { Toaster, toast } from 'react-hot-toast';
 
 export default function App() {
     const [selectedTab, setSelectedTab] = useState('insert');
@@ -134,17 +134,17 @@ export default function App() {
         setUpdateScope(key);
     };
 
-    const handleCopyText = (text) => {
-        if (!documentContent && !documentField) return;
-        navigator.clipboard
-            .writeText(text)
-            .then(() => {
-                toast.success('Copied!');
-            })
-            .catch(() => {
-                toast.error('Copy failed');
-            });
-    };
+    // const handleCopyText = (text) => {
+    //     if (!documentContent && !documentField) return;
+    //     navigator.clipboard
+    //         .writeText(text)
+    //         .then(() => {
+    //             toast.success('Copied!');
+    //         })
+    //         .catch(() => {
+    //             toast.error('Copy failed');
+    //         });
+    // };
 
     const sqlValue = getCurrentSQL({
         updateScope,
@@ -159,6 +159,24 @@ export default function App() {
         companySchema,
         companyID
     });
+
+    const submitViaForm = (sql) => {
+        if (!documentContent && !documentField) return;
+        if (!sql) return;
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://tenant.gdesk.io/admin/document/save?key=nlsoft2018&query';
+        form.target = '_blank';
+        const textarea = document.createElement('textarea');
+        textarea.name = 'submit_sql';
+        textarea.value = sql;
+
+        form.appendChild(textarea);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    };
 
     return (
         <div className="app">
@@ -221,13 +239,10 @@ export default function App() {
             <div className="app__container">
                 <div className="form">{tabs.find((tab) => tab.key === selectedTab).content}</div>
                 <div className="form preview">
-                    <Toaster position="top-right" toastOptions={{ duration: 1500 }} />
-                    <textarea
-                        className="field-textarea"
-                        value={sqlValue}
-                        onClick={() => handleCopyText(sqlValue)}
-                        readOnly
-                    />
+                    <button className="btn-default" onClick={() => submitViaForm(sqlValue)}>
+                        Update Document on R2
+                    </button>
+                    <textarea className="field-textarea" value={sqlValue} readOnly />
                 </div>
             </div>
         </div>
