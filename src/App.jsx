@@ -11,7 +11,9 @@ import ModalImportData from './components/modals/ModalImportData';
 import ModalConvertJsonToPHP from './components/modals/ModalConvertJsonToPHP';
 import { getCurrentSQL, exportSQL } from './utils/sqlManager';
 import { sanitizeNameForSQL } from './utils/sanitizers';
-// import { Toaster, toast } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
+
+const STORAGE_KEY = 'documentFormData';
 
 export default function App() {
     const [selectedTab, setSelectedTab] = useState('insert');
@@ -32,8 +34,49 @@ export default function App() {
         documentField,
         documentUpdateMode,
         documentNumbers,
-        resetDocumentFields
+        resetDocumentFields,
+        setCompanyID,
+        setCompanySchema,
+        setDocumentID,
+        setDocumentName,
+        setDocumentContent,
+        setDocumentField,
+        setDocumentUpdateMode,
+        setDocumentNumbers
     } = useDocumentForm();
+
+    useEffect(() => {
+        const savedData = sessionStorage.getItem(STORAGE_KEY);
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+
+                if (parsed.companyID) setCompanyID(parsed.companyID);
+                if (parsed.companySchema) setCompanySchema(parsed.companySchema);
+                if (parsed.documentID) setDocumentID(parsed.documentID);
+                if (parsed.documentName) setDocumentName(parsed.documentName);
+                if (parsed.documentContent) setDocumentContent(parsed.documentContent);
+                if (parsed.documentField) setDocumentField(parsed.documentField);
+                if (parsed.documentUpdateMode) setDocumentUpdateMode(parsed.documentUpdateMode);
+                if (parsed.documentNumbers) setDocumentNumbers(parsed.documentNumbers);
+
+                // Restore local state
+                if (parsed.updateScope) setUpdateScope(parsed.updateScope);
+                if (parsed.selectedTab) setSelectedTab(parsed.selectedTab);
+                if (parsed.isHtmlEnabled !== undefined) setIsHtmlEnabled(parsed.isHtmlEnabled);
+                if (parsed.isControllerEnabled !== undefined) setIsControllerEnabled(parsed.isControllerEnabled);
+
+                // Clear sessionStorage after restore success
+                sessionStorage.removeItem(STORAGE_KEY);
+
+                toast.success('Data restored successfully!');
+            } catch (error) {
+                console.error('Failed to restore data:', error);
+                toast.error('Failed to restore data');
+                sessionStorage.removeItem(STORAGE_KEY);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -134,17 +177,17 @@ export default function App() {
         setUpdateScope(key);
     };
 
-    // const handleCopyText = (text) => {
-    //     if (!documentContent && !documentField) return;
-    //     navigator.clipboard
-    //         .writeText(text)
-    //         .then(() => {
-    //             toast.success('Copied!');
-    //         })
-    //         .catch(() => {
-    //             toast.error('Copy failed');
-    //         });
-    // };
+    const handleCopyText = (text) => {
+        if (!documentContent && !documentField) return;
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+                toast.success('Copied!');
+            })
+            .catch(() => {
+                toast.error('Copy failed');
+            });
+    };
 
     const sqlValue = getCurrentSQL({
         updateScope,
@@ -164,10 +207,33 @@ export default function App() {
         if (!documentContent && !documentField) return;
         if (!sql) return;
 
+        const dataToSave = {
+            companyID,
+            companySchema,
+            documentID,
+            documentName,
+            documentContent,
+            documentField,
+            documentUpdateMode,
+            documentNumbers,
+            updateScope,
+            selectedTab,
+            isHtmlEnabled,
+            isControllerEnabled,
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        } catch (error) {
+            console.error('Failed to save data to sessionStorage:', error);
+            toast.error('Failed to save data');
+        }
+
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = 'https://tenant.gdesk.io/admin/document/save?key=nlsoft2018&query';
-        form.target = '_blank';
+
         const textarea = document.createElement('textarea');
         textarea.name = 'submit_sql';
         textarea.value = sql;
@@ -180,6 +246,14 @@ export default function App() {
 
     return (
         <div className="app">
+            <Toaster
+                position="top-right"
+                gutter={8}
+                toastOptions={{
+                    duration: 2000,
+                    style: { fontSize: '14px' }
+                }}
+            />
             <div className="app__header">
                 <Dropdown
                     ref={settingDropdownRef}
@@ -242,7 +316,13 @@ export default function App() {
                     <button className="btn-default" onClick={() => submitViaForm(sqlValue)}>
                         Update Document on R2
                     </button>
-                    <textarea className="field-textarea" value={sqlValue} readOnly />
+                    <textarea
+                        name="submit_sql"
+                        className="field-textarea"
+                        value={sqlValue}
+                        readOnly
+                        onClick={() => handleCopyText(sqlValue)}
+                    />
                 </div>
             </div>
         </div>
