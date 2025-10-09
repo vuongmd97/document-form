@@ -208,9 +208,7 @@ export default function App() {
         if (!sql) return;
 
         const tokenURL = import.meta.env.VITE_TOKEN_URL;
-        const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        tokenWindow.close();
+        window.open(tokenURL, '_blank', 'width=400,height=200');
 
         const form = document.createElement('form');
         form.method = 'POST';
