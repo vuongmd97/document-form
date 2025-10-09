@@ -157,6 +157,12 @@ export default function App() {
         resetDocumentFields();
         setIsHtmlEnabled(true);
         setIsControllerEnabled(true);
+
+        try {
+            sessionStorage.removeItem(STORAGE_KEY);
+        } catch (e) {
+            console.error('Failed to clear session snapshot:', e);
+        }
     };
 
     const toggleDropdown = (key) => {
