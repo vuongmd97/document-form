@@ -1,5 +1,5 @@
 // api/submit-sql.js
-const DOCUMENT_SAVE_URL = 'https://tenant.gdesk.io/admin/document/save?key=nlsoft2018';
+const DOCUMENT_SAVE_URL = 'https://tenant.gdesk.io/admin/document/save?key=nlsoft2018&query';
 
 export default async function handler(req, res) {
     try {
@@ -21,13 +21,12 @@ export default async function handler(req, res) {
 
         console.log('Starting token connection to:', TOKEN_URL);
 
-        // Step 1: Connect to TOKEN_URL with increased timeout and better error handling
         try {
             const connectController = new AbortController();
             const connectTimeout = setTimeout(() => {
                 console.log('Token connection timeout after 15s');
                 connectController.abort();
-            }, 15000); // Tăng timeout lên 15s
+            }, 15000);
 
             const tokenResponse = await fetch(TOKEN_URL, {
                 method: 'GET',
@@ -42,11 +41,9 @@ export default async function handler(req, res) {
             clearTimeout(connectTimeout);
             console.log('Token connection status:', tokenResponse.status);
 
-            // Đọc response để đảm bảo request hoàn tất
             await tokenResponse.text();
         } catch (tokenError) {
             console.error('Token connection error:', tokenError.message);
-            // Continue anyway - có thể token vẫn được activate
             if (tokenError.name === 'AbortError') {
                 console.log('Token connection timed out, continuing with SQL submit');
             }
