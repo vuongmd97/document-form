@@ -1,4 +1,3 @@
-// api/submit-sql.js
 const DOCUMENT_SAVE_URL = 'https://tenant.gdesk.io/admin/document/save?key=nlsoft2018&query';
 
 export default async function handler(req, res) {
@@ -21,6 +20,8 @@ export default async function handler(req, res) {
 
         console.log('Starting token connection to:', TOKEN_URL);
 
+        let cookieHeader = '';
+
         try {
             const connectController = new AbortController();
             const connectTimeout = setTimeout(() => {
@@ -41,6 +42,16 @@ export default async function handler(req, res) {
             clearTimeout(connectTimeout);
             console.log('Token connection status:', tokenResponse.status);
 
+            if (typeof tokenResponse.headers.getSetCookie === 'function') {
+                const cookies = tokenResponse.headers.getSetCookie();
+                if (cookies?.length) {
+                    cookieHeader = cookies.map((c) => c.split(';')[0]).join('; ');
+                }
+            } else {
+                const sc = tokenResponse.headers.get('set-cookie');
+                if (sc) cookieHeader = sc.split(';')[0];
+            }
+
             await tokenResponse.text();
         } catch (tokenError) {
             console.error('Token connection error:', tokenError.message);
@@ -49,12 +60,10 @@ export default async function handler(req, res) {
             }
         }
 
-        // Small delay để đảm bảo token được process
         await new Promise((resolve) => setTimeout(resolve, 500));
 
         console.log('Submitting SQL to:', DOCUMENT_SAVE_URL);
 
-        // Step 2: Submit SQL with increased timeout
         const body = new URLSearchParams();
         body.set('submit_sql', sql);
 
@@ -62,13 +71,14 @@ export default async function handler(req, res) {
         const submitTimeout = setTimeout(() => {
             console.log('SQL submit timeout after 20s');
             submitController.abort();
-        }, 20000); // Tăng timeout lên 20s
+        }, 20000);
 
         const saveResp = await fetch(DOCUMENT_SAVE_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                ...(cookieHeader ? { Cookie: cookieHeader } : {})
             },
             body: body.toString(),
             signal: submitController.signal
@@ -109,7 +119,6 @@ async function parseBody(req) {
     if (ct.includes('application/json')) {
         return JSON.parse(raw || '{}');
     }
-
     const sp = new URLSearchParams(raw);
     return Object.fromEntries(sp.entries());
 }
