@@ -203,7 +203,7 @@ export default function App() {
         companyID
     });
 
-    const submitViaForm = (sql) => {
+    const submitViaForm = async (sql) => {
         if (!documentContent && !documentField) return;
         if (!sql) return;
 
@@ -230,18 +230,27 @@ export default function App() {
             toast.error('Failed to save data');
         }
 
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://tenant.gdesk.io/admin/document/save?key=nlsoft2018&query';
+        try {
+            const resp = await fetch('/api/submit-sql', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sql })
+            });
 
-        const textarea = document.createElement('textarea');
-        textarea.name = 'submit_sql';
-        textarea.value = sql;
+            const json = await resp.json();
 
-        form.appendChild(textarea);
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
+            if (!resp.ok || !json?.ok) {
+                console.error('Submit failed:', json);
+                toast.error('Update failed');
+                return;
+            }
+
+            toast.success('Updated to R2 successfully!');
+            resetAllSettings();
+        } catch (e) {
+            console.error(e);
+            toast.error('Network error');
+        }
     };
 
     return (
