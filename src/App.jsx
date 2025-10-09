@@ -207,6 +207,29 @@ export default function App() {
         if (!documentContent && !documentField) return;
         if (!sql) return;
 
+        const dataToSave = {
+            companyID,
+            companySchema,
+            documentID,
+            documentName,
+            documentContent,
+            documentField,
+            documentUpdateMode,
+            documentNumbers,
+            updateScope,
+            selectedTab,
+            isHtmlEnabled,
+            isControllerEnabled,
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        } catch (error) {
+            console.error('Failed to save data to sessionStorage:', error);
+            toast.error('Failed to save data');
+        }
+
         const tokenURL = import.meta.env.VITE_TOKEN_URL;
         const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
         await new Promise((resolve) => setTimeout(resolve, 1500));
