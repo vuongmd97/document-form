@@ -207,49 +207,23 @@ export default function App() {
         if (!documentContent && !documentField) return;
         if (!sql) return;
 
-        const dataToSave = {
-            companyID,
-            companySchema,
-            documentID,
-            documentName,
-            documentContent,
-            documentField,
-            documentUpdateMode,
-            documentNumbers,
-            updateScope,
-            selectedTab,
-            isHtmlEnabled,
-            isControllerEnabled,
-            timestamp: new Date().toISOString()
-        };
+        const tokenURL = import.meta.env.VITE_TOKEN_URL;
+        const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        tokenWindow.close();
 
-        try {
-            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-        } catch (error) {
-            console.error('Failed to save data to sessionStorage:', error);
-            toast.error('Failed to save data');
-        }
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://tenant.gdesk.io/admin/document/save?key=nlsoft2018&query';
 
-        try {
-            const resp = await fetch('/api/submit-sql', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sql })
-            });
+        const textarea = document.createElement('textarea');
+        textarea.name = 'submit_sql';
+        textarea.value = sql;
+        form.appendChild(textarea);
 
-            const json = await resp.json();
-
-            if (!resp.ok || !json?.ok) {
-                console.error('Submit failed:', json);
-                toast.error('Update failed');
-                return;
-            }
-
-            toast.success('Updated to R2 successfully!');
-        } catch (e) {
-            console.error(e);
-            toast.error('Network error');
-        }
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
     };
 
     return (
