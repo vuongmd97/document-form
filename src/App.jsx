@@ -246,7 +246,6 @@ export default function App() {
             }
 
             toast.success('Updated to R2 successfully!');
-            resetAllSettings();
         } catch (e) {
             console.error(e);
             toast.error('Network error');
