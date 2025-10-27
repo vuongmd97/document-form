@@ -12,6 +12,8 @@ import ModalConvertJsonToPHP from './components/modals/ModalConvertJsonToPHP';
 import { getCurrentSQL, exportSQL } from './utils/sqlManager';
 import { sanitizeNameForSQL } from './utils/sanitizers';
 import { Toaster, toast } from 'react-hot-toast';
+import ModalAccessToken from './components/modals/ModalAccessToken';
+import { getAccessToken } from './components/modals/ModalAccessToken';
 
 const STORAGE_KEY = 'documentFormData';
 
@@ -143,6 +145,10 @@ export default function App() {
         {
             key: 'convertJsonPHP',
             label: 'Convert JSON to PHP Array'
+        },
+        {
+            key: 'accessToken',
+            label: 'Access Token'
         }
     ];
 
@@ -150,7 +156,8 @@ export default function App() {
         generateFile: ModalGenerateFile,
         keepUrls: ModalPasteLinks,
         importFileSQL: ModalImportData,
-        convertJsonPHP: ModalConvertJsonToPHP
+        convertJsonPHP: ModalConvertJsonToPHP,
+        accessToken: ModalAccessToken
     };
 
     const resetAllSettings = () => {
@@ -213,6 +220,13 @@ export default function App() {
         if (!documentContent && !documentField) return;
         if (!sql) return;
 
+        const tokenURL = getAccessToken();
+        if (!tokenURL) {
+            toast.error('Please set access token first!');
+            handleOpenModal('accessToken');
+            return;
+        }
+
         const dataToSave = {
             companyID,
             companySchema,
@@ -236,7 +250,6 @@ export default function App() {
             toast.error('Failed to save data');
         }
 
-        const tokenURL = import.meta.env.VITE_TOKEN_URL;
         const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
         await new Promise((resolve) => setTimeout(resolve, 1500));
         tokenWindow.close();
