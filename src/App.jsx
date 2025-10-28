@@ -221,6 +221,19 @@ export default function App() {
         companyID
     });
 
+    const handleAccessToken = async () => {
+        const tokenURL = getAccessToken();
+        if (!tokenURL) {
+            toast.error('Please set access token first!');
+            handleOpenModal('accessToken');
+            return;
+        }
+
+        const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        tokenWindow.close();
+    };
+
     const submitViaForm = async (sql) => {
         if (!documentContent && !documentField) return;
         if (!sql) return;
@@ -307,6 +320,10 @@ export default function App() {
 
                 <div className="btn-default" onClick={resetAllSettings}>
                     Clear Fields
+                </div>
+
+                <div className="btn-default" onClick={handleAccessToken}>
+                    Access Token
                 </div>
 
                 <div
