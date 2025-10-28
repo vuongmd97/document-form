@@ -149,6 +149,11 @@ export default function App() {
         {
             key: 'accessToken',
             label: 'Access Token'
+        },
+        {
+            key: 'listDocGlobalTenant',
+            label: 'List Document Global on Tenant site',
+            src: 'https://tenant.gdesk.io/admin/document/list?key=nlsoft2018'
         }
     ];
 

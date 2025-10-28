@@ -16,11 +16,19 @@ const Dropdown = forwardRef(
                             key={opt.key}
                             className={`items ${selectedKey === opt.key ? 'active' : ''}`}
                             onClick={() => {
-                                onSelect(opt.key);
-                                onToggle();
+                                if (!opt.src) {
+                                    onSelect(opt.key);
+                                    onToggle();
+                                }
                             }}
                         >
-                            {opt.label}
+                            {opt.src !== '' ? (
+                                <a href={opt.src} target="_blank">
+                                    {opt.label}
+                                </a>
+                            ) : (
+                                opt.label
+                            )}
                         </div>
                     ))}
                 </div>
