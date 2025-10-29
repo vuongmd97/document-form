@@ -31,7 +31,7 @@ export default function ModalAccessToken({ handleOpenModal }) {
             <div className="modal__overlay" onClick={() => handleOpenModal('accessToken')}></div>
             <div className="modal__container">
                 <div className="header-modal">
-                    <span className="header-label">Access Token</span>
+                    <span className="header-label">Add Link Token</span>
                     <div className="btn-default --icon-lg" onClick={() => handleOpenModal('accessToken')}>
                         <IonIcon icon={closeOutline} style={{ fontSize: '20px' }} />
                     </div>
