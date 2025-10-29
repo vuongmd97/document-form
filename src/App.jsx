@@ -148,7 +148,7 @@ export default function App() {
         },
         {
             key: 'accessToken',
-            label: 'Access Token'
+            label: 'Add Link Token'
         },
         {
             key: 'listDocGlobalTenant',
