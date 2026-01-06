@@ -6,7 +6,9 @@ export const UpdateForm = ({
     isHtmlEnabled,
     setIsHtmlEnabled,
     isControllerEnabled,
-    setIsControllerEnabled
+    setIsControllerEnabled,
+    resetField,
+    resetHTML
 }) => {
     const {
         companyID,
@@ -81,15 +83,25 @@ export const UpdateForm = ({
             <div className="rows">
                 <div className="flex-between">
                     <p className="txt">Document Content</p>
-                    <ToggleTabs
-                        classes="mb-5"
-                        value={isHtmlEnabled}
-                        setValue={setIsHtmlEnabled}
-                        options={[
-                            { label: 'On', value: true },
-                            { label: 'Off', value: false }
-                        ]}
-                    />
+
+                    <div className="flexcenter mb-5 gap-5">
+                        <ToggleTabs
+                            value={isHtmlEnabled}
+                            setValue={setIsHtmlEnabled}
+                            options={[
+                                { label: 'On', value: true },
+                                { label: 'Off', value: false }
+                            ]}
+                        />
+                        <div
+                            className="btn-default --md"
+                            onClick={() => {
+                                setDocumentContent('');
+                            }}
+                        >
+                            Clear
+                        </div>
+                    </div>
                 </div>
                 <textarea
                     className="field-textarea"
@@ -102,15 +114,25 @@ export const UpdateForm = ({
             <div className="rows">
                 <div className="flex-between">
                     <p className="txt">Document Controller</p>
-                    <ToggleTabs
-                        classes="mb-5"
-                        value={isControllerEnabled}
-                        setValue={setIsControllerEnabled}
-                        options={[
-                            { label: 'On', value: true },
-                            { label: 'Off', value: false }
-                        ]}
-                    />
+
+                    <div className="flexcenter mb-5 gap-5">
+                        <ToggleTabs
+                            value={isControllerEnabled}
+                            setValue={setIsControllerEnabled}
+                            options={[
+                                { label: 'On', value: true },
+                                { label: 'Off', value: false }
+                            ]}
+                        />
+                        <div
+                            className="btn-default --md"
+                            onClick={() => {
+                                setDocumentField('');
+                            }}
+                        >
+                            Clear
+                        </div>
+                    </div>
                 </div>
                 <textarea
                     className="field-textarea"
