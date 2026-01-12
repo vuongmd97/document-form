@@ -6,9 +6,7 @@ export const UpdateForm = ({
     isHtmlEnabled,
     setIsHtmlEnabled,
     isControllerEnabled,
-    setIsControllerEnabled,
-    resetField,
-    resetHTML
+    setIsControllerEnabled
 }) => {
     const {
         companyID,

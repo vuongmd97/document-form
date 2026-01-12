@@ -9,12 +9,9 @@ export default function ModalPasteLinks({ handleOpenModal }) {
         e.preventDefault();
         const pastedText = e.clipboardData.getData('text');
 
-        const links = pastedText
-            .split('\n')
-            .map((line) => line.match(/https?:\/\/[^\s]+/)?.[0])
-            .filter(Boolean);
+        const links = pastedText.match(/https?:\/\/[^\s]+/g) || [];
 
-        const finalText = links.join('\n');
+        const finalText = links.map((link, index) => `${index + 1}. ${link}`).join('\n');
         setExtractedLinks(finalText);
     };
 
