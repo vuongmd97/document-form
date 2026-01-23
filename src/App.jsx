@@ -230,13 +230,14 @@ export default function App() {
         }
 
         const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         tokenWindow.close();
     };
 
     const submitViaForm = async (sql) => {
         if (!documentContent && !documentField) return;
         if (!sql) return;
+        if (selectedTab === 'insert' && !documentName) return;
 
         const tokenURL = getAccessToken();
         if (!tokenURL) {
@@ -269,7 +270,7 @@ export default function App() {
         }
 
         const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         tokenWindow.close();
 
         const form = document.createElement('form');
@@ -362,13 +363,7 @@ export default function App() {
                     <button className="btn-default" onClick={() => submitViaForm(sqlValue)}>
                         Update Document on R2
                     </button>
-                    <textarea
-                        name="submit_sql"
-                        className="field-textarea"
-                        value={sqlValue}
-                        readOnly
-                        onClick={() => handleCopyText(sqlValue)}
-                    />
+                    <textarea name="submit_sql" className="field-textarea" value={sqlValue} readOnly />
                 </div>
             </div>
         </div>

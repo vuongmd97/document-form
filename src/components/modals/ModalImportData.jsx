@@ -18,33 +18,80 @@ export default function ModalImportData({ handleOpenModal }) {
     } = useDocumentForm();
 
     const parseSqlFile = (text) => {
-        const sections = text.split(/^--\s+/gm).map((s) => s.trim());
-        const map = {};
+        const result = {
+            documentNumbers: '',
+            companyID: '',
+            companySchema: '',
+            documentUpdateMode: '',
+            documentName: '',
+            documentID: '',
+            documentContent: '',
+            documentField: ''
+        };
 
-        for (let i = 1; i < sections.length; i++) {
-            const [header, ...contentLines] = sections[i].split('\n');
-            const key = header.trim().toUpperCase();
-            map[key] = contentLines.join('\n').trim();
+        // Extract document numbers from class name
+        const classMatch = text.match(/class m\d+_\d+_(\d+)_/);
+        if (classMatch) {
+            result.documentNumbers = classMatch[1];
         }
 
-        return {
-            documentNumbers: map['DOCUMENT_NUMBERS'] || '',
-            companyID: map['COMPANY_ID'] || '',
-            companySchema: map['COMPANY_SCHEMA'] || '',
-            documentUpdateMode: map['DOCUMENT_MODE_UPDATE'] || '',
-            documentName: map['DOCUMENT_NAME'] || '',
-            documentID: map['DOCUMENT_ID'] || '',
-            documentContent: map['DOCUMENT_CONTENT'] || '',
-            documentField: map['DOCUMENT_FIELD'] || ''
-        };
+        // Extract schema
+        const schemaMatch = text.match(/\$schema\s*=\s*['"]([^'"]+)['"]/);
+        if (schemaMatch) {
+            result.companySchema = schemaMatch[1];
+        }
+
+        // Extract userId (companyID)
+        const userIdMatch = text.match(/\$userId\s*=\s*(\d+)/);
+        if (userIdMatch) {
+            result.companyID = userIdMatch[1];
+        }
+
+        // Extract ownerId (for update mode)
+        const ownerIdMatch = text.match(/\$ownerId\s*=\s*(\d+)/);
+        if (ownerIdMatch) {
+            result.companyID = ownerIdMatch[1];
+        }
+
+        // Extract documentId
+        const docIdMatch = text.match(/\$(?:userDocumentsId|documentId)\s*=\s*(\d+)/);
+        if (docIdMatch) {
+            result.documentID = docIdMatch[1];
+        }
+
+        // Extract updateAll mode
+        const updateAllMatch = text.match(/\$updateAll\s*=\s*(\d+)/);
+        if (updateAllMatch) {
+            result.documentUpdateMode = updateAllMatch[1];
+        }
+
+        // Extract name
+        const nameMatch = text.match(/\$name\s*=\s*['"]([^'"]*)['"]/);
+        if (nameMatch) {
+            result.documentName = nameMatch[1];
+        }
+
+        // Extract content - handle both single and double quotes, multiline
+        const contentMatch = text.match(/\$content\s*=\s*['"]([^]*?)['"];\s*(?:\$fields|\n)/);
+        if (contentMatch) {
+            result.documentContent = contentMatch[1];
+        }
+
+        // Extract fields - handle both single and double quotes, multiline
+        const fieldsMatch = text.match(/\$fields\s*=\s*['"]([^]*?)['"];/);
+        if (fieldsMatch) {
+            result.documentField = fieldsMatch[1];
+        }
+
+        return result;
     };
 
     const handleFileDrop = (e) => {
         e.preventDefault();
 
         const file = e.dataTransfer.files?.[0];
-        if (!file || !file.name.endsWith('.sql')) {
-            alert('Please drop a valid .sql file.');
+        if (!file || !file.name.endsWith('.php')) {
+            alert('Please drop a valid .php file.');
             return;
         }
 
@@ -60,7 +107,7 @@ export default function ModalImportData({ handleOpenModal }) {
 
             const parsed = parseSqlFile(content);
             if (!parsed) {
-                alert('Unable to parse SQL file.');
+                alert('Unable to parse PHP file.');
                 return;
             }
 
@@ -69,7 +116,7 @@ export default function ModalImportData({ handleOpenModal }) {
             setCompanySchema(parsed.companySchema || '');
             setDocumentID(parsed.documentID || '');
             setDocumentName(parsed.documentName || '');
-            setDocumentUpdateMode(Number(parsed.documentUpdateMode));
+            setDocumentUpdateMode(Number(parsed.documentUpdateMode) || 0);
             setDocumentContent(parsed.documentContent || '');
             setDocumentField(parsed.documentField || '');
         };
@@ -121,7 +168,7 @@ export default function ModalImportData({ handleOpenModal }) {
                         onDrop={handleDrop}
                     >
                         <div className="dropzone__container">
-                            <p>Drag and drop a SQL file to import data</p>
+                            <p>Drag and drop a PHP file to import data</p>
                         </div>
                     </div>
                 </div>

@@ -157,38 +157,38 @@ export const exportSQL = async (params) => {
     folder.file(migrationSQLInsertFilename, migrationSQLInsert);
 
     // Export file SQL
-    const docDataContent = `-- DOCUMENT_NUMBERS
-${documentNumbers}
+    //     const docDataContent = `-- DOCUMENT_NUMBERS
+    // ${documentNumbers}
 
--- COMPANY_ID
-${companyID}
+    // -- COMPANY_ID
+    // ${companyID}
 
--- COMPANY_SCHEMA
-${companySchema}
+    // -- COMPANY_SCHEMA
+    // ${companySchema}
 
--- DOCUMENT_MODE_UPDATE
-${documentUpdateMode}
+    // -- DOCUMENT_MODE_UPDATE
+    // ${documentUpdateMode}
 
--- DOCUMENT_NAME
-${documentName}
+    // -- DOCUMENT_NAME
+    // ${documentName}
 
--- DOCUMENT_ID
-${documentID}
+    // -- DOCUMENT_ID
+    // ${documentID}
 
--- DOCUMENT_CONTENT
-${isHtmlEnabled ? documentContent : ''}
+    // -- DOCUMENT_CONTENT
+    // ${isHtmlEnabled ? documentContent : ''}
 
--- DOCUMENT_FIELD
-${isControllerEnabled ? documentField : ''}`;
+    // -- DOCUMENT_FIELD
+    // ${isControllerEnabled ? documentField : ''}`;
 
-    const dataFilename = generateFilename({
-        documentNumbers,
-        documentName,
-        suffix: `_${selectedTab.toUpperCase()}_${updateScope.toUpperCase()}_DATA.sql`,
-        includeDate: false
-    });
+    //     const dataFilename = generateFilename({
+    //         documentNumbers,
+    //         documentName,
+    //         suffix: `_${selectedTab.toUpperCase()}_${updateScope.toUpperCase()}_DATA.sql`,
+    //         includeDate: false
+    //     });
 
-    zip.file(dataFilename, docDataContent);
+    //     zip.file(dataFilename, docDataContent);
 
     // Generate the zip file
     const blob = await zip.generateAsync({ type: 'blob' });
