@@ -7,9 +7,9 @@ export const generateFilename = ({ documentNumbers, documentName = 'Document', s
     const day = formatDate(now.getDate());
 
     const formatDocumentName = documentName
-        .replace(/[’'&,.\-+]/g, '')
-        .replace(/[\s/]+/g, '_')
-        .trim();
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .trim()
+        .replace(/\s+/g, '_');
 
     const dataPrefix = includeDate ? `${year}_${month}_${day}_` : '';
 
