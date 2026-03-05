@@ -269,8 +269,8 @@ export default function App() {
             toast.error('Failed to save data');
         }
 
-        const tokenWindow = window.open(tokenURL, '_blank', 'width=400,height=200');
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const tokenWindow = window.open(tokenURL, '_blank', 'width=200,height=200');
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         tokenWindow.close();
 
         const form = document.createElement('form');
